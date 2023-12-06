@@ -15,7 +15,7 @@ import Swal from 'sweetalert2';
 export class UsuariosComponent implements OnInit, OnDestroy{
 
   public totalUsuarios: number = 0;
-  public usuarios: Usuario[] =[];
+  public usuarios: Usuario[] = [];
   public usuariosTemp: Usuario[] =[];
 
   public imgSubs?: Subscription;
@@ -69,7 +69,7 @@ export class UsuariosComponent implements OnInit, OnDestroy{
     }
 
     this.busquedasService.buscar('usuarios', termino)
-        .subscribe( resultados => {
+        .subscribe( (resultados: any) => {
           this.usuarios = resultados;
         });
   }
