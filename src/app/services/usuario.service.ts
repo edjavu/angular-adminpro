@@ -30,6 +30,10 @@ export class UsuarioService {
     return localStorage.getItem('token') || '';
   }
 
+  get role(): 'ADMIN_ROLE' | 'USER_ROLE' | undefined{
+    return this.usuario?.role;
+  }
+
   get uid(): string {
     return this.usuario?.uid!;
   }
@@ -42,14 +46,22 @@ export class UsuarioService {
     }
   }
 
+  guardarLocalStorage(token: string, menu: any){
+    localStorage.setItem('token', token);
+    localStorage.setItem('menu', JSON.stringify(menu));
+  }
+
   logout(){
     localStorage.removeItem('token');
+    localStorage.removeItem('menu');
 
     google.accounts.id.revoke('eduardojavy@gmail.com', () => {
       this.ngZone.run(() => {
         this.router.navigateByUrl('/login');
       })
     });
+
+    this.router.navigateByUrl('/login');
 
   }
 
@@ -65,7 +77,7 @@ export class UsuarioService {
 
         this.usuario = new Usuario(nombre, email, '', img, google, role, uid);
 
-        localStorage.setItem('token', resp.token);
+        this.guardarLocalStorage(resp.token, resp.menu);
 
         return true;
       }),
@@ -79,7 +91,7 @@ export class UsuarioService {
     return this.http.post(`${base_url}/usuarios`, formData)
                     .pipe(
                       tap( (resp: any) => {
-                        localStorage.setItem('token', resp.token);
+                        this.guardarLocalStorage(resp.token, resp.menu);
                       })
                     )
 
@@ -100,7 +112,7 @@ export class UsuarioService {
     return this.http.post(`${base_url}/login`, formData)
                     .pipe(
                       tap( (resp: any) => {
-                        localStorage.setItem('token', resp.token);
+                        this.guardarLocalStorage(resp.token, resp.menu);
                       })
                     )
 
@@ -111,7 +123,7 @@ export class UsuarioService {
                     .pipe(
                       tap( (resp: any) => {
                         // console.log(resp);
-                        localStorage.setItem('token', resp.token);
+                        this.guardarLocalStorage(resp.token, resp.menu);
                       })
                     )
   }
